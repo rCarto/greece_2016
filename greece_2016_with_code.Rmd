@@ -184,8 +184,8 @@ text(x = 0.2, y = 0.6,
 
 Two fundamental packages:  
 
-  * `sp`: handle and display of spatial objects
-  * `rgdal`: import/export spatial objects, manage cartographic projections
+* `sp`: handle and display of spatial objects
+* `rgdal`: import/export spatial objects, manage cartographic projections
 
 [spatial_data_handling.R]()
 ```{r}
@@ -397,7 +397,6 @@ library(cartography) # mapping functions
 library(osrm) # road time-distance
 library(rgeos) # geocomputations
 
-
 # import shapfiles
 road <- readOGR(dsn = "data/shp", layer = "odiko_souli")
 localities <- readOGR(dsn = "data/shp", layer = "oikismoi_souli")
@@ -410,10 +409,10 @@ row.names(localities) <- localities@data$OBJECTID
 dist <- gDistance(localities[1:5,], byid = TRUE) 
 distkm <- round(dist/1000, 0)
 distkm
-distmin <- osrmTable(df = localities@data[1:5,], 
-                     id = "OBJECTID", 
-                     x = "LON", y = "LAT")
-distmin
+distmin <- osrmTable(loc = localities@data[1:5,], 
+                     locId = "OBJECTID", locLat = "LAT", locLon = "LON") 
+
+distmin$distance_table
 
 # get OpenStreetMap basemap
 osm <- getTiles2(localities[1:5,], crop = T)
@@ -430,14 +429,14 @@ plot(start, col="green", add=TRUE, pch = 20, cex = 3)
 plot(end, col="orange", add=TRUE, pch = 20, cex = 3)
 
 # time and distance between the two points
-roadtrip <- osrmViaroute(xo = start$LON, yo = start$LAT, 
-                         xd = end$LON, yd = end$LAT)
+roadtrip <- osrmViaroute(srcLon =  start$LON, srcLat =  start$LAT, 
+                         dstLon =  end$LON, dstLat = end$LAT)
 roadtrip
 
 # get the travel geometry
-longroad <- osrmViarouteGeom(xo = start$LON, yo = start$LAT, 
-                             xd = end$LON, yd = end$LAT, sp = TRUE, 
-                             ido = start$OBJECTID, idd = end$OBJECTID)
+longroad <- osrmViarouteGeom(srcLon = start$LON, srcLat = start$LAT, 
+                             dstLon = end$LON, dstLat = end$LAT, sp = TRUE, 
+                             srcId = start$OBJECTID, dstId = end$OBJECTID)
 class(longroad)
 longroad@proj4string
 # reproject the travel geometry
@@ -696,10 +695,8 @@ This presentation has been written in rMarkdown and build within RStudio.
 * [R-sig-Geo Mailing list](https://stat.ethz.ch/mailman/listinfo/r-sig-geo) *R Special Interest Group on using Geographical data and Mapping*
 * [CRAN Task View: Analysis of Spatial Data](https://cran.r-project.org/web/views/Spatial.html)  
 * [R-bloggers](http://www.r-bloggers.com/) *A blog aggregator of content collected from bloggers who write about R (in English).*   
-* [52 volumes of the Springers' book series "Use R!"](http://link.springer.com/bookseries/6991) of which :  
-     * [The R Software](http://link.springer.com/book/10.1007/978-1-4614-9020-3) (Pierre Lafaye de Micheaux, Rémy Drouilhet, Benoit Liquet)  
-     * [Beginning Data Science with R](http://link.springer.com/book/10.1007/978-3-319-12066-9) (Manas A. Pathak)  
-     * [Applied Spatial Data Analysis with R](http://link.springer.com/book/10.1007/978-1-4614-7618-4) (Roger S. Bivand, Edzer Pebesma, Virgilio Gómez-Rubio)  
+* [Applied Spatial Data Analysis with R](http://link.springer.com/book/10.1007/978-1-4614-7618-4) (Roger S. Bivand, Edzer Pebesma, Virgilio Gómez-Rubio)    
+* **A lot of tutorials and presentations online** 
 
 
 

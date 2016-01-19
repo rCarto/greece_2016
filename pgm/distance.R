@@ -4,7 +4,7 @@ library(rgdal) # import shapefiles & manage projection
 library(cartography) # mapping functions
 library(osrm) # road time-distance
 library(rgeos) # geocomputations
-
+?osrm
 
 # import shapfiles
 road <- readOGR(dsn = "data/shp", layer = "odiko_souli")
@@ -18,16 +18,17 @@ row.names(localities) <- localities@data$OBJECTID
 dist <- gDistance(localities[1:5,], byid = TRUE) 
 distkm <- round(dist/1000, 0)
 distkm
-distmin <- osrmTable(df = localities@data[1:5,], 
-                     id = "OBJECTID", 
-                     x = "LON", y = "LAT")
-distmin
+distmin <- osrmTable(loc = localities@data[1:5,], 
+                     locId = "OBJECTID", 
+                     locLat = "LAT", locLon = "LON") 
+
+distmin$distance_table
 
 # get OpenStreetMap basemap
 osm <- getTiles2(localities[1:5,], crop = T)
 tilesLayer2(osm)
 plot(road, col = "red", lwd = 2, add = TRUE)
-plot(localities[1:5,], add=T)
+plot(localities[1:5,], add=T, pch = 20, cex = 2)
 labelLayer(spdf = localities[1:5, ], df = localities[1:5, ]@data, 
            txt = "OBJECTID", pos = 3)
 
@@ -38,14 +39,14 @@ plot(start, col="green", add=TRUE, pch = 20, cex = 3)
 plot(end, col="orange", add=TRUE, pch = 20, cex = 3)
 
 # time and distance between the two points
-roadtrip <- osrmViaroute(xo = start$LON, yo = start$LAT, 
-                         xd = end$LON, yd = end$LAT)
+roadtrip <- osrmViaroute(srcLon =  start$LON, srcLat =  start$LAT, 
+                         dstLon =  end$LON, dstLat = end$LAT)
 roadtrip
 
 # get the travel geometry
-longroad <- osrmViarouteGeom(xo = start$LON, yo = start$LAT, 
-                             xd = end$LON, yd = end$LAT, sp = TRUE, 
-                             ido = start$OBJECTID, idd = end$OBJECTID)
+longroad <- osrmViarouteGeom(srcLon = start$LON, srcLat = start$LAT, 
+                             dstLon = end$LON, dstLat = end$LAT, sp = TRUE, 
+                             srcId = start$OBJECTID, dstId = end$OBJECTID)
 class(longroad)
 longroad@proj4string
 # reproject the travel geometry

@@ -20,6 +20,7 @@ text(x = 5564810,y = 4098997, labels = "Each dot is a tweet",
 
 # intersection between tweets & states
 tweetsInNuts0 <- over(x = marseillegeo, y = nuts0.spdf)
+
 tweetsInNuts0$nb <- 1
 # counting tweets inside countries
 tweetspercountry <- aggregate(x = tweetsInNuts0$nb, 
@@ -29,7 +30,7 @@ names(tweetspercountry) <- c("name", "nbtweets")
 head(tweetspercountry[order(tweetspercountry$nbtweets, decreasing = T),])
 
 # Create a grid of points
-hexapoints <- spsample(x = nuts0.spdf, cellsize = 40000, type = 'hexagonal')
+hexapoints <- spsample(x = nuts0.spdf, cellsize = 100000, type = 'hexagonal')
 # convert the point grid into hexagon grid
 hexapoly <- HexPoints2SpatialPolygons(hex = hexapoints)
 datahexa <- data.frame(id = row.names(hexapoly), x = 1)

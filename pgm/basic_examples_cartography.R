@@ -1,7 +1,12 @@
 data("nuts2006")
 ## Proportional Symbols 
+
+# Dataser
+head(nuts0.df)
+
 # Countries plot
 plot(nuts0.spdf)
+
 # Population plot on proportional symbols
 propSymbolsLayer(spdf = nuts0.spdf, df = nuts0.df, var = "pop2008")
 
@@ -29,6 +34,7 @@ propSymbolsLayer(spdf = nuts0.spdf, df = nuts0.df,
 
 
 ## Choropleth Layer
+head(nuts2.df)
 nuts2.df$unemprate <- nuts2.df$unemp2008/nuts2.df$act2008*100
 choroLayer(spdf = nuts2.spdf, df = nuts2.df, var = "unemprate")
 
@@ -52,3 +58,5 @@ layoutLayer(title = "Unemployement in Europe",
             col = "black",
             south = TRUE, 
             coltitle = "white")
+
+vignette(topic = "cartography")

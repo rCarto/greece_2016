@@ -1,0 +1,231 @@
+---
+title: "ExeRcises"
+author: "Timothée Giraud"
+date: "13 janvier 2016"
+output:
+  html_document:
+    highlight: tango
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    number_sections: yes
+    toc: yes
+---
+
+The work done in this exercise must be presented in webpage and in a pdf.
+
+# Import Data in R
+The first step is to import some data in R. 
+
+## Import Statistical Data 
+- Import data on countries (/data/world.csv)  
+```{r}
+# Use read.csv to import csv in R
+world <- read.csv(file = "data/world.csv")
+# Show the first lines of a data frame
+head(world)
+```
+
+
+
+
+## Import Geographical Data
+- Import the world countries basemap. Which package is needed to do so?
+
+
+```{r}
+# The rgdal package is the "go to" package to handle spatial data in R 
+library(rgdal)
+worldbasemap <- readOGR(dsn = "data/shp", layer = "countries")
+
+# Spatial objects can be plotted
+plot(worldbasemap)
+worldbasemap@proj4string
+```
+
+
+# Get information on the dataset
+- How many countries are documented in this file ?
+- How many variables describe the countries ?
+- Which country has the greatest share of urban population ? You will have to create a variable (share of urban population) and find a way to get its maximum value (see `?order` or `?which.max` functions)
+
+```{r}
+# Number of lines in a data frame
+nrow(world)
+# Number of columns
+ncol(world)
+
+# create a new variable
+world$URBSHARE <- world$URB / world$POP * 100
+
+# select the line with the max value
+world[which.max(world$URBSHARE),]
+
+# or order the data frame along the variable
+world <- world[order(world$URBSHARE, decreasing = TRUE), ]
+head(world)
+
+```
+
+
+# Manipulate the base map
+
+- Display a map of the world (color countries, boundaries)
+- Change the projection of the map (see the `?spTransform` function from the `sp` package).
+
+```{r}
+# Plots of spatial objects can be customized
+plot(worldbasemap, 
+     col  = "#E3DEBF", 
+     border = "white", 
+     lwd=0.75, 
+     bg = "#A6CAE0")
+
+# The spTransform function allow to transform projections
+# => http://spatialreference.org/
+robinson_proj <- "+proj=robin +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
+worldbasemap.reproj <- spTransform(x = worldbasemap, 
+                                 CRSobj = robinson_proj)
+
+plot(worldbasemap.reproj, 
+     col  = "#E3DEBF", 
+     border = "white", 
+     lwd=0.75, 
+     bg = "#A6CAE0")
+```
+
+
+
+# Thematic Mapping
+- Create a map of the countries population with a full layout (north arrow, legend, title...) (see the  `?cartography` package)
+- Create a map of the countries urbanization.
+
+```{r, fig.height = 3.5}
+library(cartography)
+opar <- par(mar = c(0,0,1.2,0))
+plot(worldbasemap.reproj, 
+     col  = "#E3DEBF", 
+     border = "white", 
+     lwd=0.75, 
+     bg = "#A6CAE0")
+
+propSymbolsLayer(spdf = worldbasemap.reproj, df = world, var = "POP", 
+                 border = "grey80", col = "#920000", lwd = 0.5,
+                 legend.pos = "left", legend.title.txt = 'Population', 
+                 legend.values.rnd = -2)
+layoutLayer(title = "World Population", 
+            sources = "", 
+            author = "T. Giraud, 2016", 
+            scale = NULL)
+
+par(opar)
+
+boxplot(world$URBSHARE)
+hist(world$URBSHARE)
+summary(world$URBSHARE)
+opar <- par(mar = c(0,0,1.2,0))
+
+layoutLayer(title = "World Urbanization", extent = worldbasemap.reproj,
+            sources = "", col = "NA",
+            author = "T. Giraud, 2016", 
+            scale = NULL, bg =  "#A6CAE0", 
+            frame = FALSE, coltitle = "#952020")
+
+
+choroLayer(spdf = worldbasemap.reproj, df = world, 
+           var = "URBSHARE", 
+           method = "quantile", nclass = 8, 
+           col = carto.pal(pal1 = "green.pal", n1 = 4, 
+                           pal2 = "wine.pal", n2 = 4), 
+           border = "grey40", lwd = 0.5, legend.pos = "left", 
+           legend.title.txt = "Urbanization\nrate (%)", add=TRUE) 
+
+
+plot(worldbasemap.reproj,
+     col  = "#E3DEBF",
+     border = "white",
+     lwd=0.75,
+     bg = "#A6CAE0")
+propSymbolsChoroLayer(spdf = worldbasemap.reproj, df = world, var = "POP",
+                      border = "grey80", lwd = 0.5, var2 = "URBSHARE",
+                      method = "quantile", nclass = 8,
+                      col =  carto.pal(pal1 = "green.pal", n1 = 4,
+                                       pal2 = "wine.pal", n2 = 4),
+                      legend.var.pos = "right", legend.var.title.txt = 'Population',
+                      legend.var.values.rnd = -2, legend.var2.pos = "left",
+                      legend.var2.title.txt = "Urbanization\nrate (%)" )
+layoutLayer(title = "World Urbanization", 
+            sources = "", col = "NA",
+            author = "T. Giraud, 2016", 
+            scale = NULL, 
+            coltitle = "#952020")
+
+```
+
+
+
+# Distance calculations
+- Which are the countries the more far away from each other ? (see `spDists`, `which`...)
+- Which are the countries the more close from each other ? 
+
+```{r}
+library(sp)
+worldbasemap.WGS84 <- spTransform(x = worldbasemap.reproj, 
+                                  CRSobj = "+init=epsg:4326")
+mat <- spDists(x = worldbasemap.WGS84, y = worldbasemap.WGS84, 
+               longlat = TRUE)
+dimnames(mat) <- list(worldbasemap.WGS84$ID, worldbasemap.WGS84$ID)
+diag(mat) <- NA
+which(mat == max(mat, na.rm = T), arr.ind = TRUE)
+which(mat == min(mat, na.rm = T), arr.ind = TRUE)
+
+```
+
+# Geoprocessing
+- Import the layer of Souli localities.
+- Import the Corine Landcover layer of Souli.
+- Plot a map with each dot colored with the landuse it lays on. (see `over` from `sp` package)
+- Use detailed names in the legend (see the clclegend.csv file)
+
+```{r}
+library(rgdal)
+localities <- readOGR(dsn = "data/shp", layer = "oikismoi_souli")
+landcover <- readOGR(dsn = "data/shp", layer = "souli_corine")
+
+# add the projection info 
+landcover@proj4string <- localities@proj4string
+
+head(localities@data)
+head(landcover@data)
+row.names(x = localities) <- localities$OBJECTID
+locCLC <- over(x = localities, y = landcover)
+locCLC$ID <- row.names(locCLC)
+opar <- par(mar = c(0,0,1.2,0))
+plot(landcover, col = "grey80", lwd = "0.5", border = "grey50")
+
+propSymbolsTypoLayer(spdf = localities, dfid = "ID", k = 0.001,
+                     df = locCLC, 
+                     var = "DXF_COLOR",legend.var.pos = "n",
+                     var2 = "CODE_00")
+
+clcNames <- read.csv("data/clclegend.csv")
+
+locCLC <- merge(locCLC, clcNames, by.x= "CODE_00", by.y = "CLC_CODE", all.x)
+locCLC$LABEL3 <- as.character(locCLC$LABEL3)
+
+osm <- getTiles2(spdf = landcover, crop = T)
+tilesLayer2(osm)
+plot(landcover, col = "grey80", lwd = "0.5", border = "grey50", add=T)
+
+propSymbolsTypoLayer(spdf = localities, dfid = "ID", k = 0.001,
+                     df = locCLC, 
+                     var = "DXF_COLOR",legend.var.pos = "n",
+                     var2 = "LABEL3"
+                    )
+layoutLayer()
+par(opar)
+```
+
+
+
+

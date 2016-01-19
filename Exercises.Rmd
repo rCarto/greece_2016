@@ -1,0 +1,38 @@
+---
+title: "ExeRcises"
+author: "Timothée Giraud"
+date: "13 janvier 2016"
+output:
+  html_document:
+    highlight: tango
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    number_sections: yes
+    toc: yes
+---
+
+The work done in this exercise must be presented in webpage and in a pdf.
+
+# Import Data in R
+The first step is to import some data in R. 
+
+## Import Statistical Data 
+- Import data on countries (/data/world.csv)  
+
+## Import Geographical Data
+- Import the world countries basemap. Which package is needed to do so?
+
+# Get information on the dataset
+- How many countries are documented in this file ?
+- How many variables describe the countries ?
+- Which country has the greatest share of urban population ? You will have to create a variable (share of urban population) and find a way to get its maximum value (see `?order` or `?which.max` functions)
+
+# Manipulate the base map
+
+- Display a map of the world (colored countries, boundaries)
+- Change the projection of the map (see the `?spTransform` function from the `sp` package).
+
+# Thematic Mapping
+- Create a map of the countries population with a full layout (north arrow, legend, title...) (see `?cartography`)
+- Create a map of the countries urbanization with a full layout (north arrow, legend, title...) (see `?cartography`)

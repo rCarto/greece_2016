@@ -19,17 +19,6 @@ output:
 - Reproducible Research
 
 
-<div class="notes">
-This is my *note*.
-
-- It can contain markdown
-- like this list
- 
-</div>
-
-
-
-
 # What is R?
 
 ## What is R?
@@ -274,13 +263,14 @@ This presentation has been written in rMarkdown and build within RStudio.
 * [CRAN Task View: Analysis of Spatial Data](https://cran.r-project.org/web/views/Spatial.html)  
 * [R-bloggers](http://www.r-bloggers.com/) *A blog aggregator of content collected from bloggers who write about R (in English).*   
 * [Applied Spatial Data Analysis with R](http://link.springer.com/book/10.1007/978-1-4614-7618-4) (Roger S. Bivand, Edzer Pebesma, Virgilio Gómez-Rubio)    
+* [Tips for reading spatial files into R with rgdal](http://zevross.com/blog/2016/01/13/tips-for-reading-spatial-files-into-r-with-rgdal/)
 * **A lot of tutorials and presentations online** 
 
 
 
-# Thank you !
+# ευχαριστώ !
 
-## Thank you !{.flexbox .vcenter}
+## ευχαριστώ !{.flexbox .vcenter}
 
 [timothee.giraud@ums-riate.fr](timothee.giraud@ums-riate.fr)  
 
