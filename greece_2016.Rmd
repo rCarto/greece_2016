@@ -81,7 +81,7 @@ A look at RStudio and some basic examples of code...
 Two fundamental packages:  
 
   * `sp`: handle and display of spatial objects
-  * `rgdal`: import/export spatial objects, manage cartographic projections
+  * `rgdal`: import/export spatial objects, management of cartographic projections
 
 [spatial_data_handling.R]()
 
@@ -98,9 +98,8 @@ The `cartography` package allows various **cartographic representations** and so
 * Discontinuities maps   
 * Cartographic palettes   
 * Layout   
-* Nice legends   
 * Access to cartographic API   
-* Irregular polygons to regular grid transformation with data handling  
+* ...
 
 ## Thematic cartography
 
@@ -135,9 +134,10 @@ m <- addTiles(map = m)
 m <- setView(map = m, lng = 21.182957, lat = 39.771098, zoom = 15)
 # add a pop-up
 m <- addPopups(map = m, lng = 21.182957, lat = 39.771098, 
-               popup = '<a href="https://el.wikipedia.org/wiki/%CE%9C%CE%AD%CF%84%CF%83%CE%BF%CE%B2%CE%BF">
-               Μέτσοβο                       </a><br/><br/>
-               <img src="https://upload.wikimedia.org/wikipedia/en/8/80/Wikipedia-logo-v2.svg"/>')
+               popup = 
+'<a href="https://el.wikipedia.org/wiki/%CE%9C%CE%AD%CF%84%CF%83%CE%BF%CE%B2%CE%BF">
+Μέτσοβο                       </a><br/><br/>
+<img src="https://upload.wikimedia.org/wikipedia/en/8/80/Wikipedia-logo-v2.svg"/>')
 # affichage de la carte
 m
 ```
@@ -192,7 +192,7 @@ The `rgeos` package gives access to the GEOS ([Geometry Engine - Open Source](ht
 * ...
 
 ## Distance calculation
-Euclidean distance vs. Road distance
+Euclidean distance vs. Road distance with the `osrm` package
 
 [distance.R]()
 
@@ -205,20 +205,21 @@ An example of (very) basic point pattern analysis of geocoded tweets.
 [tweets.R]()
 
 ## Discontinuities
-How to extracts discontinuities (borders) between regions.
+How to extract discontinuities (borders) between regions with the `cartography` package.
 
 [disc.R]()
 
 
 ## Spatial Smoothing
-The `SpatialPosition` package allow to compute Stewart potentials (gravitational potential)
+The `SpatialPosition` package allows to compute gravitational potentials.
+
 $$
 A_i = \sum_{j=1}^n O_j f(d_{ij})
 $$
 
-- $A_i$ potentiel en $i$
-- $O_j$ stock de population sur $j$ 
-- $f(d_{ij})$ fonction négative de la distance entre $i$ et $j$
+- $A_i$ potential in $i$
+- $O_j$ population stock in $j$ 
+- $f(d_{ij})$ decay function applied to the distance between $i$ and $j$
 
 [smooth.R]()
 
@@ -248,11 +249,14 @@ communication channels between users and developers, creates trust by individual
 
 [Markdown](https://daringfireball.net/projects/markdown/), an easy-to-read and easy-to-write markup language.  
 
-[greece_2016_with_code.Rmd]()
+
+[R Markdown](http://rmarkdown.rstudio.com/), markdown with R code.  
+
+[greece_2016_with_code.Rmd](http://wukan.ums-riate.fr/metsovo/greece_2016_with_code.Rmd)
 
 ## This Presentation!
 This presentation has been written in rMarkdown and build within RStudio.  
-[greece_2016.Rmd]()
+[greece_2016.Rmd](http://wukan.ums-riate.fr/metsovo/greece_2016.Rmd)
 
 
 
@@ -276,15 +280,15 @@ This presentation has been written in rMarkdown and build within RStudio.
 
 
 
-
 GitHub: [https://github.com/rCarto/](https://github.com/rCarto/)  
-
 
 
 
 Blog: [http://rgeomatic.hypotheses.org/](http://rgeomatic.hypotheses.org/)  
 
 
+This presentation + exercises + corrections :  
+[https://github.com/rCarto/greece_2016](https://github.com/rCarto/greece_2016)
 
 
 

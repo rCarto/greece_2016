@@ -25,8 +25,8 @@ distmin <- osrmTable(loc = localities@data[1:5,],
 distmin$distance_table
 
 # get OpenStreetMap basemap
-osm <- getTiles2(localities[1:5,], crop = T)
-tilesLayer2(osm)
+osm <- getTiles(localities[1:5,])
+tilesLayer(osm)
 plot(road, col = "red", lwd = 2, add = TRUE)
 plot(localities[1:5,], add=T, pch = 20, cex = 2)
 labelLayer(spdf = localities[1:5, ], df = localities[1:5, ]@data, 
@@ -39,22 +39,25 @@ plot(start, col="green", add=TRUE, pch = 20, cex = 3)
 plot(end, col="orange", add=TRUE, pch = 20, cex = 3)
 
 # time and distance between the two points
-roadtrip <- osrmViaroute(srcLon =  start$LON, srcLat =  start$LAT, 
-                         dstLon =  end$LON, dstLat = end$LAT)
+roadtrip <- osrmViaroute(src =  c(start$LAT, start$LON), 
+                         dst =  c(end$LAT, end$LON))
 roadtrip
+# speed (km/h)
+roadtrip[2]/(roadtrip[1]/60)
 
 # get the travel geometry
-longroad <- osrmViarouteGeom(srcLon = start$LON, srcLat = start$LAT, 
-                             dstLon = end$LON, dstLat = end$LAT, sp = TRUE, 
-                             srcId = start$OBJECTID, dstId = end$OBJECTID)
+longroad <- osrmViarouteGeom(src = c(start$OBJECTID, start$LAT, start$LON),
+                             dst = c(end$OBJECTID, end$LAT, end$LON),
+                             sp = TRUE)
 class(longroad)
 longroad@proj4string
 # reproject the travel geometry
 longroad <- spTransform(x = longroad, CRSobj = road@proj4string)
 
 # Map the travel
-osm2 <- getTiles2(longroad, crop = TRUE)
-tilesLayer2(osm2)
+osm <- getTiles(longroad)
+tilesLayer(osm)
 plot(longroad, col = "red", add=T, lwd = 2)
 plot(start, col="green", add=TRUE, pch = 20, cex = 3)
 plot(end, col="orange", add=TRUE, pch = 20, cex = 3)
+
