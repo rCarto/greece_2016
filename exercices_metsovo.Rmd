@@ -1,0 +1,134 @@
+---
+title: "ExeRcices Metsovo"
+author: "Timothée Giraud"
+date: "25 janvier 2016"
+output:
+  html_document:
+    highlight: tango
+    number_sections: yes
+    theme: journal
+    toc: yes
+---
+
+
+# Install and load a package
+Install and load the package named `cartography`.
+=> search for how to do it on internet
+
+
+```{r}
+# install.packages("cartography")
+library(cartography)
+```
+
+
+# Load some data
+
+```{r}
+data(nuts2006)
+```
+
+nuts2006 is a dataset embedded in the cartography package.
+It contains different objects:
+- data frame (ending with df)  
+- spatial data frames sobjects (ending with .spdf)  
+
+You can click on a dataframe to view it on RStudio.
+You can also show the first lines of the data frame on the console with the `head` function.
+```{r}
+head(nuts2.df)
+```
+
+Try to show only the 6 firsts lines on the console.
+type ?head on the console to show function help in RStudio or search for "R head" on the internet.
+
+You can plot (display) a spatial object with the plot function.
+```{r}
+plot(nuts2.spdf)
+```
+
+You can access other attributes (data, projection...) of spatial objects with the `@`:
+```{r}
+# projection info 
+nuts2.spdf@proj4string
+# the full attribute table
+nuts2.spdf@data
+# first line of the attribute table
+head(nuts2.spdf@data)
+
+```
+
+
+
+
+
+
+
+# Modify and adapt an existing code
+
+Here is some code that plot a map of countries population in Europe: 
+```{r}
+library(cartography)
+data(nuts2006)
+plot(nuts0.spdf, col = "red",border = "blue")
+# Population plot on proportional symbols
+propSymbolsLayer(spdf = nuts0.spdf, df = nuts0.df,
+                 var = "pop2008", k = 0.001, border = "white",
+                 symbols = "circle", col =  "green",
+                 legend.pos = "bottomleft", 
+                 legend.title.txt = "Population in 20118", 
+                 legend.style = "c")
+```
+
+The map is not very informative, circles are too small, colors are not carefully choosen.
+You can adapt the map and choose better parameters to make a better map, for example you can change the colors of the basemap, make bigger symbols, modify the legend etc..  
+See ?propSymbolsLayer (help of the function) to see what is possible.  
+You can also check the layoutLayer function to add a layout to the map (title, scale, north arrow, author...)
+
+
+# Search for the travel time between your hometown and Metsovo
+
+The osrm package allows to get travel times and travel geometries thanks to OpenStreetMap database.
+
+
+```{r}
+library(osrm)
+
+route <- osrmViaroute(src = c(39.771395, 21.181455), 
+                      dst = c(39.640706, 20.854831))
+route
+routeGeom <- route <- osrmViarouteGeom(src = c("Metsovo",39.771395, 21.181455), 
+                                       dst = c("Ioannina",39.640706, 20.854831), 
+                                       sp = TRUE)
+plot(routeGeom)
+routeGeom@data
+```
+
+At this point it is possible to export the road to a GIS format:
+
+```{r}
+library(rgdal)
+# writeOGR(obj = routeGeom, dsn = getwd(), layer = "myroad", driver = "ESRI Shapefile")
+```
+
+
+
+# Show OpenStreetMap tiles in R
+
+
+```{r}
+library(cartography)
+
+library(OpenStreetMap)
+osmTiles <- getTiles(spdf = routeGeom)
+
+tilesLayer2(osmTiles)
+
+plot(routeGeom, add=T, col = "blue", lty = 2, lwd = 2)
+
+```
+
+
+
+
+

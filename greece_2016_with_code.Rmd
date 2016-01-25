@@ -428,9 +428,8 @@ library(rgdal) # import shapefiles & manage projection
 library(cartography) # mapping functions
 library(osrm) # road time-distance
 # to use a specific osrm server
-options(osrm.server = "http://0.0.0.0:5000/")
+# options(osrm.server = "http://0.0.0.0:5000/")
 library(rgeos) # geocomputations
-?osrm
 
 # import shapfiles
 road <- readOGR(dsn = "data/shp", layer = "odiko_souli")

@@ -6,13 +6,11 @@ output:
   html_document:
     highlight: tango
     number_sections: yes
-    toc: yes
-  pdf_document:
-    number_sections: yes
+    theme: journal
     toc: yes
 ---
 
-The work done in this exercise must be presented in webpage and in a pdf.
+The work done in this exercise must be presented in a webpage or in a pdf.
 
 # Import Data in R
 The first step is to import some data in R. 
@@ -30,9 +28,7 @@ head(world)
 
 
 ## Import Geographical Data
-- Import the world countries basemap. Which package is needed to do so?
-
-
+- Import the world countries base-map. Which package is needed to do so?
 ```{r}
 # The rgdal package is the "go to" package to handle spatial data in R 
 library(rgdal)
@@ -46,15 +42,21 @@ worldbasemap@proj4string
 
 # Get information on the dataset
 - How many countries are documented in this file ?
-- How many variables describe the countries ?
-- Which country has the greatest share of urban population ? You will have to create a variable (share of urban population) and find a way to get its maximum value (see `?order` or `?which.max` functions)
-
 ```{r}
 # Number of lines in a data frame
 nrow(world)
+
+```
+- How many variables describe the countries ?
+```{r}
 # Number of columns
 ncol(world)
+```
 
+
+- Which country has the greatest share of urban population ? You will have to create a variable (share of urban population) and find a way to get its maximum value (see `?order` or `?which.max` functions)
+
+```{r}
 # create a new variable
 world$URBSHARE <- world$URB / world$POP * 100
 
@@ -70,9 +72,7 @@ head(world)
 
 # Manipulate the base map
 
-- Display a map of the world (color countries, boundaries)
-- Change the projection of the map (see the `?spTransform` function from the `sp` package).
-
+- Display a map of the world (change countries colors, boundaries, background...)
 ```{r}
 # Plots of spatial objects can be customized
 plot(worldbasemap, 
@@ -81,11 +81,17 @@ plot(worldbasemap,
      lwd=0.75, 
      bg = "#A6CAE0")
 
+```
+
+
+- Change the projection of the map (see the `?spTransform` function from the `sp` package).
+
+```{r}
 # The spTransform function allow to transform projections
 # => http://spatialreference.org/
 robinson_proj <- "+proj=robin +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
 worldbasemap.reproj <- spTransform(x = worldbasemap, 
-                                 CRSobj = robinson_proj)
+                                   CRSobj = robinson_proj)
 
 plot(worldbasemap.reproj, 
      col  = "#E3DEBF", 
@@ -98,7 +104,6 @@ plot(worldbasemap.reproj,
 
 # Thematic Mapping
 - Create a map of the countries population with a full layout (north arrow, legend, title...) (see the  `?cartography` package)
-- Create a map of the countries urbanization.
 
 ```{r, fig.height = 3.5}
 library(cartography)
@@ -119,7 +124,9 @@ layoutLayer(title = "World Population",
             scale = NULL)
 
 par(opar)
-
+```
+- Create a map of the countries urbanization.
+```{r, fig.height = 3.5}
 boxplot(world$URBSHARE)
 hist(world$URBSHARE)
 summary(world$URBSHARE)
@@ -140,6 +147,7 @@ choroLayer(spdf = worldbasemap.reproj, df = world,
            border = "grey40", lwd = 0.5, legend.pos = "left", 
            legend.title.txt = "Urbanization\nrate (%)", add=TRUE) 
 
+## An other solution could be:
 
 plot(worldbasemap.reproj,
      col  = "#E3DEBF",
@@ -165,8 +173,8 @@ layoutLayer(title = "World Urbanization",
 
 
 # Distance calculations
-- Which are the countries the more far away from each other ? (see `spDists`, `which`...)
-- Which are the countries the more close from each other ? 
+- Which are the countries the more away from each other ? (see `spDists`, `which`...)
+- Which are the countries the closest from each other ? 
 
 ```{r}
 library(sp)
@@ -182,10 +190,8 @@ which(mat == min(mat, na.rm = T), arr.ind = TRUE)
 ```
 
 # Geoprocessing
-- Import the layer of Souli localities.
-- Import the Corine Landcover layer of Souli.
-- Plot a map with each dot colored with the landuse it lays on. (see `over` from `sp` package)
-- Use detailed names in the legend (see the clclegend.csv file)
+- Import the layer of Souli localities and the Corine Land cover layer of Souli.
+
 
 ```{r}
 library(rgdal)
@@ -197,6 +203,12 @@ landcover@proj4string <- localities@proj4string
 
 head(localities@data)
 head(landcover@data)
+```
+
+
+- Plot a map with each dot colored with the land use it lays on. (see `over` from `sp` package)
+
+```{r}
 row.names(x = localities) <- localities$OBJECTID
 locCLC <- over(x = localities, y = landcover)
 locCLC$ID <- row.names(locCLC)
@@ -208,20 +220,26 @@ propSymbolsTypoLayer(spdf = localities, dfid = "ID", k = 0.001,
                      var = "DXF_COLOR",legend.var.pos = "n",
                      var2 = "CODE_00")
 
+```
+
+
+- Use detailed names in the legend (see the clclegend.csv file and `?merge`)
+
+```{r}
+
 clcNames <- read.csv("data/clclegend.csv")
 
 locCLC <- merge(locCLC, clcNames, by.x= "CODE_00", by.y = "CLC_CODE", all.x)
 locCLC$LABEL3 <- as.character(locCLC$LABEL3)
 
-osm <- getTiles2(spdf = landcover, crop = T)
-tilesLayer2(osm)
-plot(landcover, col = "grey80", lwd = "0.5", border = "grey50", add=T)
+# osm <- getTiles2(spdf = landcover, crop = T)
+# tilesLayer2(osm)
+plot(landcover, col = "grey80", lwd = "0.5", border = "grey50", add=F)
 
 propSymbolsTypoLayer(spdf = localities, dfid = "ID", k = 0.001,
                      df = locCLC, 
                      var = "DXF_COLOR",legend.var.pos = "n",
-                     var2 = "LABEL3"
-                    )
+                     var2 = "LABEL3")
 layoutLayer()
 par(opar)
 ```

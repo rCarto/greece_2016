@@ -6,13 +6,11 @@ output:
   html_document:
     highlight: tango
     number_sections: yes
-    toc: yes
-  pdf_document:
-    number_sections: yes
+    theme: journal
     toc: yes
 ---
 
-The work done in this exercise must be presented in webpage and in a pdf.
+The work done in this exercise must be presented in a webpage or in a pdf.
 
 # Import Data in R
 The first step is to import some data in R. 
@@ -21,7 +19,8 @@ The first step is to import some data in R.
 - Import data on countries (/data/world.csv)  
 
 ## Import Geographical Data
-- Import the world countries basemap. Which package is needed to do so?
+- Import the world countries base-map. Which package is needed to do so?
+
 
 # Get information on the dataset
 - How many countries are documented in this file ?
@@ -30,9 +29,18 @@ The first step is to import some data in R.
 
 # Manipulate the base map
 
-- Display a map of the world (colored countries, boundaries)
+- Display a map of the world (change countries colors, boundaries, background...)
 - Change the projection of the map (see the `?spTransform` function from the `sp` package).
 
 # Thematic Mapping
-- Create a map of the countries population with a full layout (north arrow, legend, title...) (see `?cartography`)
-- Create a map of the countries urbanization with a full layout (north arrow, legend, title...) (see `?cartography`)
+- Create a map of the countries population with a full layout (north arrow, legend, title...) (see the  `?cartography` package)
+- Create a map of the countries urbanization.
+
+# Distance calculations
+- Which are the countries the more away from each other ? (see `spDists`, `which`...)
+- Which are the countries the closest from each other ? 
+
+# Geoprocessing
+- Import the layer of Souli localities and the Corine Land cover layer of Souli.
+- Plot a map with each dot colored with the land use it lays on. (see `over` from `sp` package)  
+- Use detailed names in the legend (see the clclegend.csv file and `?merge`)
